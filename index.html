@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic 8 Ball</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 40px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .ball-container {
+            perspective: 1000px;
+            margin: 30px 0;
+        }
+
+        .magic-ball {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1a1a2e, #16213e);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset -5px -5px 15px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+            position: relative;
+        }
+
+        .magic-ball:hover {
+            transform: scale(1.05);
+        }
+
+        .magic-ball.shake {
+            animation: shake 0.5s;
+        }
+
+        .magic-ball.flip {
+            animation: flip 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.02) rotate(-2deg); }
+            50% { transform: scale(1.02) rotate(2deg); }
+            75% { transform: scale(1.02) rotate(-2deg); }
+        }
+
+        @keyframes flip {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0) scale(1); }
+            50% { transform: rotateX(180deg) rotateY(180deg) rotateZ(180deg) scale(1.1); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(0deg) scale(1); }
+        }
+
+        .window {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #4a4a7a, #0f0f1e);
+            border: 3px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .answer {
+            color: #00ff88;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff88;
+            line-height: 1.3;
+            max-width: 70px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .question-input {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .question-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .question-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+        }
+
+        .btn-shake {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+            color: #0f0f1e;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0,255,136,0.3);
+            margin-top: 10px;
+        }
+
+        .btn-shake:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,255,136,0.5);
+        }
+
+        .btn-shake:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .info {
+            color: rgba(255,255,255,0.8);
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .magic-ball {
+                width: 160px;
+                height: 160px;
+            }
+
+            .window {
+                width: 60px;
+                height: 60px;
+            }
+
+            .answer {
+                font-size: 12px;
+            }
+
+            .question-input {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Magic 8 Ball</h1>
+        
+        <input type="text" class="question-input" id="question" placeholder="Ask me anything...">
+        
+        <div class="ball-container">
+            <div class="magic-ball" id="ball">
+                <div class="window">
+                    <div class="answer" id="answer">?</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-shake" id="shakeBtn" onclick="shakeBall()">Shake the Ball</button>
+        
+        <div class="info">
+            💡 Ask a question and shake the ball to get your answer
+        </div>
+    </div>
+
+    <script>
+        const answers = [
+            // Positive
+            "Yes, definitely",
+            "It is certain",
+            "Without a doubt",
+            "You may rely on it",
+            "As I see it, yes",
+            "Most likely",
+            "Outlook good",
+            "Signs point to yes",
+            "Go for it",
+            "Absolutely",
+            "Do it now",
+            "The time is right",
+            "Perfect timing",
+            
+            // Negative
+            "Don't count on it",
+            "My sources say no",
+            "Outlook not so good",
+            "Very doubtful",
+            "Not in your future",
+            "Ask again later",
+            "Better not tell you now",
+            "Cannot predict now",
+            "Concentrate and ask again",
+            "Not likely",
+            "Bad timing",
+            "Wait longer",
+            "Not yet",
+            
+            // Neutral/Action
+            "Think about it",
+            "Only you know",
+            "Maybe tomorrow",
+            "Keep trying",
+            "Believe in yourself",
+            "Trust your gut",
+            "Sleep on it",
+            "Seek advice",
+            "Take a chance",
+            "Be patient",
+            "The answer lies within",
+            "All signs point to growth"
+        ];
+
+        let isShaking = false;
+
+        function shakeBall() {
+            if (isShaking) return;
+            
+            const ball = document.getElementById('ball');
+            const answer = document.getElementById('answer');
+            const btn = document.getElementById('shakeBtn');
+            const question = document.getElementById('question');
+
+            isShaking = true;
+            btn.disabled = true;
+
+            ball.classList.add('shake');
+            
+            setTimeout(() => {
+                ball.classList.remove('shake');
+                ball.classList.add('flip');
+                
+                const randomIndex = Math.floor(Math.random() * answers.length);
+                const selectedAnswer = answers[randomIndex];
+                
+                setTimeout(() => {
+                    answer.textContent = selectedAnswer;
+                }, 1000);
+                
+                setTimeout(() => {
+                    ball.classList.remove('flip');
+                    isShaking = false;
+                    btn.disabled = false;
+                }, 2000);
+            }, 500);
+        }
+
+        document.getElementById('question').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isShaking) {
+                shakeBall();
+            }
+        });
+    </script>
+</body>
+</html>
